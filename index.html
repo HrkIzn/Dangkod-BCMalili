@@ -6,7 +6,7 @@
     <title>Dangkod</title>
     <style>
         body {
-            font-family: 'Times New Roman', Times, serif;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif, sans-serif;
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
@@ -15,16 +15,16 @@
             margin: 0;
         }
         .container {
-            background: rgb(255, 255, 255);
+            background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgb(101, 12, 12);
+            box-shadow: 0 0 10px rgb(137, 36, 36);
             text-align: center;
             max-width: 500px;
             width: 100%;
         }
         h1 {
-            color: #1c1963;
+            color: #24104e;
         }
         .input-group {
             margin: 10px 0;
@@ -33,7 +33,7 @@
             width: 90%;
             height: 80px;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #000000;
             border-radius: 4px;
             resize: vertical;
         }
@@ -45,7 +45,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 10px;
+            margin: 5px;
         }
         button:hover {
             background-color: #45a049;
@@ -70,52 +70,114 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1><b><u>DANGKOD</u></b></h1>
-        <h3>Kumandang Kode Etik dan Kode Perilaku</h3>
-        <p>Masukkan kedua data pada kotak dibawah. Data 1 untuk nama pegawai. Data 2 untuk Kode etik atau kode perilaku.</p>
-        <div class="input-group">
-            <label for="list1">Data 1 (Nama: Alice, Bob, Charlie, dst):</label>
-            <textarea id="list1" placeholder="Pegawai1&#10;Pegawai2&#10;Pegawai3"></textarea>
+        <!-- Input Page -->
+        <div id="inputPage" class="page active">
+            <h1>Dangkod</h1>
+            <p>Masukkan data Pegawai dan Kode Etik/Kode Perilaku (Pisahkan dengan Enter).</p>
+            <div class="input-group">
+                <label for="list1">Nama Pegawai (Alice, Bob, Charlie, dst):</label>
+                <textarea id="list1" placeholder="Pegawai1&#10;Pegawai2&#10;Pegawai3"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="list2">Kode Etik, Kode Perilaku, Sikap Dasar :</label>
+                <textarea id="list2" placeholder="Kode etik&#10;Kode perilaku&#10;Sikap dasar"></textarea>
+            </div>
+            <button id="saveBtn">Simpan dan Pilih</button>
         </div>
-        <div class="input-group">
-            <label for="list2">Data 2 (Kode etik, Kode perilaku, Sikap dasar):</label>
-            <textarea id="list2" placeholder="Kode etik&#10;Kode perilaku&#10;Sikap dasar"></textarea>
+
+        <!-- Spin Page -->
+        <div id="spinPage" class="page">
+            <h1>Spinning...</h1>
+            <p>Bersiap Membacakan!</p>
+            <div class="wheel" id="wheel"></div>
+            <div id="result"></div>
+            <button id="spinAgainBtn" style="display: none;">Pilih Ulang</button>
+            <button id="editBtn">Edit Data</button>
         </div>
-        <button id="pickBtn">Pilih</button>
-        <div class="wheel" id="wheel"></div>
-        <div id="result"></div>
     </div>
     <script>
-        document.getElementById('pickBtn').addEventListener('click', function() {
-            const list1Input = document.getElementById('list1').value;
-            const list2Input = document.getElementById('list2').value;
+        const inputPage = document.getElementById('inputPage');
+        const spinPage = document.getElementById('spinPage');
+        const saveBtn = document.getElementById('saveBtn');
+        const spinAgainBtn = document.getElementById('spinAgainBtn');
+        const editBtn = document.getElementById('editBtn');
+        const wheel = document.getElementById('wheel');
+        const result = document.getElementById('result');
+        const list1Textarea = document.getElementById('list1');
+        const list2Textarea = document.getElementById('list2');
+
+        // Load saved data on page load
+        window.addEventListener('load', function() {
+            const savedList1 = JSON.parse(localStorage.getItem('list1')) || [];
+            const savedList2 = JSON.parse(localStorage.getItem('list2')) || [];
+            list1Textarea.value = savedList1.join('\n');
+            list2Textarea.value = savedList2.join('\n');
+        });
+
+        // Function to perform the spin
+        function performSpin() {
+            result.textContent = '';
+            wheel.style.display = 'block';
+            spinAgainBtn.style.display = 'none';
+            
+            setTimeout(() => {
+                const savedList1 = JSON.parse(localStorage.getItem('list1'));
+                const savedList2 = JSON.parse(localStorage.getItem('list2'));
+                const randomIndex1 = Math.floor(Math.random() * savedList1.length);
+                const randomIndex2 = Math.floor(Math.random() * savedList2.length);
+                const selected1 = savedList1[randomIndex1];
+                const selected2 = savedList2[randomIndex2];
+                result.textContent = ` "${selected1}" Membacakan "${selected2}"`;
+                wheel.style.display = 'none';
+                spinAgainBtn.style.display = 'block';
+            }, 2000);
+        }
+
+        // Save and switch to spin page
+        saveBtn.addEventListener('click', function() {
+            const list1Input = list1Textarea.value;
+            const list2Input = list2Textarea.value;
             const list1 = list1Input.split('\n').map(item => item.trim()).filter(item => item !== '');
             const list2 = list2Input.split('\n').map(item => item.trim()).filter(item => item !== '');
             
             if (list1.length === 0 || list2.length === 0) {
-                document.getElementById('result').textContent = 'Please enter at least one item in both lists.';
+                alert('Please enter at least two item in both lists.');
+                return;
+            }
+             if (list1.length === 1 || list2.length === 1) {
+                alert('Please enter at least two item in both lists.');
                 return;
             }
             
-            // Show wheel animation
-            const wheel = document.getElementById('wheel');
-            const result = document.getElementById('result');
-            result.textContent = '';
-            wheel.style.display = 'block';
+            // Save to localStorage
+            localStorage.setItem('list1', JSON.stringify(list1));
+            localStorage.setItem('list2', JSON.stringify(list2));
             
-            // Simulate picking after 2 seconds
-            setTimeout(() => {
-                const randomIndex1 = Math.floor(Math.random() * list1.length);
-                const randomIndex2 = Math.floor(Math.random() * list2.length);
-                const selected1 = list1[randomIndex1];
-                const selected2 = list2[randomIndex2];
-                result.textContent = `Data 1: ${selected1} | Data 2: ${selected2}`;
-                wheel.style.display = '';
-            }, 2000);
+            // Switch to spin page and start first spin
+            inputPage.classList.remove('active');
+            spinPage.classList.add('active');
+            performSpin();
+        });
+
+        // Spin again
+        spinAgainBtn.addEventListener('click', performSpin);
+
+        // Edit lists (back to input page)
+        editBtn.addEventListener('click', function() {
+            spinPage.classList.remove('active');
+            inputPage.classList.add('active');
+            result.textContent = '';
+            spinAgainBtn.style.display = 'none';
         });
     </script>
 </body>
