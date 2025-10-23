@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dangkod</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgb(255, 255, 255);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgb(101, 12, 12);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #1c1963;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        textarea {
+            width: 90%;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .wheel {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><b><u>DANGKOD</u></b></h1>
+        <h3>Kumandang Kode Etik dan Kode Perilaku</h3>
+        <p>Masukkan kedua data pada kotak dibawah. Data 1 untuk nama pegawai. Data 2 untuk Kode etik atau kode perilaku.</p>
+        <div class="input-group">
+            <label for="list1">Data 1 (Nama: Alice, Bob, Charlie, dst):</label>
+            <textarea id="list1" placeholder="Pegawai1&#10;Pegawai2&#10;Pegawai3"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="list2">Data 2 (Kode etik, Kode perilaku, Sikap dasar):</label>
+            <textarea id="list2" placeholder="Kode etik&#10;Kode perilaku&#10;Sikap dasar"></textarea>
+        </div>
+        <button id="pickBtn">Pilih</button>
+        <div class="wheel" id="wheel"></div>
+        <div id="result"></div>
+    </div>
+    <script>
+        document.getElementById('pickBtn').addEventListener('click', function() {
+            const list1Input = document.getElementById('list1').value;
+            const list2Input = document.getElementById('list2').value;
+            const list1 = list1Input.split('\n').map(item => item.trim()).filter(item => item !== '');
+            const list2 = list2Input.split('\n').map(item => item.trim()).filter(item => item !== '');
+            
+            if (list1.length === 0 || list2.length === 0) {
+                document.getElementById('result').textContent = 'Please enter at least one item in both lists.';
+                return;
+            }
+            
+            // Show wheel animation
+            const wheel = document.getElementById('wheel');
+            const result = document.getElementById('result');
+            result.textContent = '';
+            wheel.style.display = 'block';
+            
+            // Simulate picking after 2 seconds
+            setTimeout(() => {
+                const randomIndex1 = Math.floor(Math.random() * list1.length);
+                const randomIndex2 = Math.floor(Math.random() * list2.length);
+                const selected1 = list1[randomIndex1];
+                const selected2 = list2[randomIndex2];
+                result.textContent = `Data 1: ${selected1} | Data 2: ${selected2}`;
+                wheel.style.display = '';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
